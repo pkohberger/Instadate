@@ -22,6 +22,15 @@
         />
 
     <EditText
+        android:id="@+id/user_password"
+        style="@style/MatchWidth"
+        android:paddingTop="16dp"
+        android:hint="User password"
+        android:textSize="16sp"
+        android:singleLine="true"
+        />
+
+    <EditText
         android:id="@+id/chat_room_name"
         style="@style/MatchWidth"
         android:paddingTop="@dimen/padding_top"
