@@ -33,7 +33,10 @@ public class LoginActivity extends BaseActivity {
 
     private String TAG = LoginActivity.class.getSimpleName();
 
+    private String userPassword;
+
     private EditText userNameEditText;
+    private EditText userPasswordEditText;
     private EditText chatRoomNameEditText;
 
     private QBUser userForSave;
@@ -60,6 +63,8 @@ public class LoginActivity extends BaseActivity {
         setActionBarTitle(R.string.title_login_activity);
         userNameEditText = (EditText) findViewById(R.id.user_name);
         userNameEditText.addTextChangedListener(new LoginEditTextWatcher(userNameEditText));
+
+        userPasswordEditText = (EditText) findViewById(R.id.user_password);
 
         chatRoomNameEditText = (EditText) findViewById(R.id.chat_room_name);
         chatRoomNameEditText.addTextChangedListener(new LoginEditTextWatcher(chatRoomNameEditText));
@@ -122,7 +127,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginToChat(final QBUser qbUser) {
-        qbUser.setPassword(Consts.DEFAULT_USER_PASSWORD);
+        qbUser.setPassword(this.userPassword);
 
         userForSave = qbUser;
         startLoginService(qbUser);
@@ -141,11 +146,12 @@ public class LoginActivity extends BaseActivity {
 
     private QBUser createUserWithEnteredData() {
         return createQBUserWithCurrentData(String.valueOf(userNameEditText.getText()),
-                String.valueOf(chatRoomNameEditText.getText()));
+                String.valueOf(chatRoomNameEditText.getText()),String.valueOf(userPasswordEditText.getText()));
     }
 
-    private QBUser createQBUserWithCurrentData(String userName, String chatRoomName) {
+    private QBUser createQBUserWithCurrentData(String userName, String chatRoomName, String userPassword) {
         QBUser qbUser = null;
+        this.userPassword = userPassword;
         if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(chatRoomName)) {
             StringifyArrayList<String> userTags = new StringifyArrayList<>();
             userTags.add(chatRoomName);
@@ -153,7 +159,7 @@ public class LoginActivity extends BaseActivity {
             qbUser = new QBUser();
             qbUser.setFullName(userName);
             qbUser.setLogin(getCurrentDeviceId());
-            qbUser.setPassword(Consts.DEFAULT_USER_PASSWORD);
+            qbUser.setPassword(userPassword);
             qbUser.setTags(userTags);
         }
 
