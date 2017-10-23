@@ -81,7 +81,7 @@ public class LoginActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_login_user_done:
-                if (isEnteredUserNameValid() && isEnteredRoomNameValid()) {
+                if (isEnteredUserNameValid() && isEnteredRoomNameValid() && isEnteredUserPasswordValid()) {
                     hideKeyboard();
                     startSignUpNewUser(createUserWithEnteredData());
                 }
@@ -98,6 +98,10 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isEnteredUserNameValid() {
         return ValidationUtils.isUserNameValid(this, userNameEditText);
+    }
+
+    private boolean isEnteredUserPasswordValid() {
+        return ValidationUtils.isUserPasswordValid(this, userPasswordEditText);
     }
 
     private void hideKeyboard() {
@@ -152,7 +156,7 @@ public class LoginActivity extends BaseActivity {
     private QBUser createQBUserWithCurrentData(String userName, String chatRoomName, String userPassword) {
         QBUser qbUser = null;
         this.userPassword = userPassword;
-        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(chatRoomName)) {
+        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(chatRoomName) && !TextUtils.isEmpty(userPassword)) {
             StringifyArrayList<String> userTags = new StringifyArrayList<>();
             userTags.add(chatRoomName);
 
