@@ -65,6 +65,7 @@ public class LoginActivity extends BaseActivity {
         userNameEditText.addTextChangedListener(new LoginEditTextWatcher(userNameEditText));
 
         userPasswordEditText = (EditText) findViewById(R.id.user_password);
+        userPasswordEditText.addTextChangedListener(new LoginEditTextWatcher(userPasswordEditText));
 
         chatRoomNameEditText = (EditText) findViewById(R.id.chat_room_name);
         chatRoomNameEditText.addTextChangedListener(new LoginEditTextWatcher(chatRoomNameEditText));
@@ -81,7 +82,7 @@ public class LoginActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_login_user_done:
-                if (isEnteredUserNameValid() && isEnteredRoomNameValid() && isEnteredUserPasswordValid()) {
+                if (isEnteredUserNameValid() && isEnteredUserPasswordValid() && isEnteredRoomNameValid()) {
                     hideKeyboard();
                     startSignUpNewUser(createUserWithEnteredData());
                 }

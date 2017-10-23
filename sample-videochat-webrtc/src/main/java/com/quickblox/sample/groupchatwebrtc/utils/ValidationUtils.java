@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import static com.quickblox.sample.groupchatwebrtc.R.string.field_name_chat_room_name;
 
+
 /**
  * Created by tereha on 03.06.16.
  */
@@ -43,7 +44,33 @@ public class ValidationUtils {
     }
 
     public static boolean isUserPasswordValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, field_name_chat_room_name, 20, true);
+
+        String password = editText.getText().toString().trim();
+        Boolean isCorrect = true;
+
+        if (password.length() < 8) {
+            isCorrect = false;
+        } else {
+            char c;
+            int count = 0;
+            for (int i = 0; i < password.length(); i++) {
+                c = password.charAt(i);
+                if (!Character.isLetterOrDigit(c)) {
+                    isCorrect = false;
+                } else if (Character.isDigit(c)) {
+                    count++;
+                }
+            }
+            if (count < 2)   {
+                isCorrect = false;
+            }
+        }
+
+        if(isCorrect == false) {
+            editText.setError("There was a password error, password must contain 8 characters, at least 2 digits and may contain only letters and digits");
+        }
+
+        return isCorrect;
     }
 
     public static boolean isRoomNameValid(Context context, EditText editText) {
