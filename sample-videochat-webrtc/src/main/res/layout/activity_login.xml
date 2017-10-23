@@ -26,6 +26,7 @@
         style="@style/MatchWidth"
         android:paddingTop="16dp"
         android:hint="User password"
+        android:inputType="textPassword"
         android:textSize="16sp"
         android:singleLine="true"
         />
