@@ -72,8 +72,4 @@ public class ValidationUtils {
 
         return isCorrect;
     }
-
-    public static boolean isRoomNameValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, field_name_chat_room_name, 15, false);
-    }
 }

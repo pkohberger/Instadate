@@ -37,7 +37,6 @@ public class LoginActivity extends BaseActivity {
 
     private EditText userNameEditText;
     private EditText userPasswordEditText;
-    private EditText chatRoomNameEditText;
 
     private QBUser userForSave;
 
@@ -67,8 +66,6 @@ public class LoginActivity extends BaseActivity {
         userPasswordEditText = (EditText) findViewById(R.id.user_password);
         userPasswordEditText.addTextChangedListener(new LoginEditTextWatcher(userPasswordEditText));
 
-        chatRoomNameEditText = (EditText) findViewById(R.id.chat_room_name);
-        chatRoomNameEditText.addTextChangedListener(new LoginEditTextWatcher(chatRoomNameEditText));
     }
 
     @Override
@@ -82,7 +79,7 @@ public class LoginActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_login_user_done:
-                if (isEnteredUserNameValid() && isEnteredUserPasswordValid() && isEnteredRoomNameValid()) {
+                if (isEnteredUserNameValid() && isEnteredUserPasswordValid()) {
                     hideKeyboard();
                     startSignUpNewUser(createUserWithEnteredData());
                 }
@@ -91,10 +88,6 @@ public class LoginActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private boolean isEnteredRoomNameValid() {
-        return ValidationUtils.isRoomNameValid(this, chatRoomNameEditText);
     }
 
     private boolean isEnteredUserNameValid() {
@@ -107,7 +100,6 @@ public class LoginActivity extends BaseActivity {
 
     private void hideKeyboard() {
         KeyboardUtils.hideKeyboard(userNameEditText);
-        KeyboardUtils.hideKeyboard(chatRoomNameEditText);
     }
 
     private void startSignUpNewUser(final QBUser newUser) {
@@ -150,16 +142,15 @@ public class LoginActivity extends BaseActivity {
     }
 
     private QBUser createUserWithEnteredData() {
-        return createQBUserWithCurrentData(String.valueOf(userNameEditText.getText()),
-                String.valueOf(chatRoomNameEditText.getText()),String.valueOf(userPasswordEditText.getText()));
+        return createQBUserWithCurrentData(String.valueOf(userNameEditText.getText()),String.valueOf(userPasswordEditText.getText()));
     }
 
-    private QBUser createQBUserWithCurrentData(String userName, String chatRoomName, String userPassword) {
+    private QBUser createQBUserWithCurrentData(String userName, String userPassword) {
         QBUser qbUser = null;
         this.userPassword = userPassword;
-        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(chatRoomName) && !TextUtils.isEmpty(userPassword)) {
+        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPassword)) {
             StringifyArrayList<String> userTags = new StringifyArrayList<>();
-            userTags.add(chatRoomName);
+            userTags.add("Tag");
 
             qbUser = new QBUser();
             qbUser.setFullName(userName);
@@ -186,7 +177,6 @@ public class LoginActivity extends BaseActivity {
             } else {
                 Toaster.longToast(getString(R.string.login_chat_login_error) + errorMessage);
                 userNameEditText.setText(userForSave.getFullName());
-                chatRoomNameEditText.setText(userForSave.getTags().get(0));
             }
         }
     }
