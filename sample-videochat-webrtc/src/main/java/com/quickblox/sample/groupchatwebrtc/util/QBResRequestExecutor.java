@@ -37,8 +37,8 @@ public class QBResRequestExecutor {
         QBPagedRequestBuilder requestBuilder = new QBPagedRequestBuilder();
         List<String> tags = new LinkedList<>();
         tags.add(tag);
-
-        QBUsers.getUsersByTags(tags, requestBuilder).performAsync(callback);
+        
+        QBUsers.getUsers(requestBuilder).performAsync(callback);
     }
 
     public void loadUsersByIds(final Collection<Integer> usersIDs, final QBEntityCallback<ArrayList<QBUser>> callback) {
