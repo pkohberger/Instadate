@@ -122,8 +122,7 @@ public class OpponentsActivity extends BaseActivity {
 
     private void startLoadUsers() {
         showProgressDialog(R.string.dlg_loading_opponents);
-        String currentRoomName = SharedPrefsHelper.getInstance().get(Consts.PREF_CURREN_ROOM_NAME);
-        requestExecutor.loadUsersByTag(currentRoomName, new QBEntityCallback<ArrayList<QBUser>>() {
+        requestExecutor.loadUsers(new QBEntityCallback<ArrayList<QBUser>>() {
             @Override
             public void onSuccess(ArrayList<QBUser> result, Bundle params) {
                 hideProgressDialog();

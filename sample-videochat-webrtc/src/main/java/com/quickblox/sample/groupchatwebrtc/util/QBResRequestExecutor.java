@@ -33,11 +33,8 @@ public class QBResRequestExecutor {
         QBUsers.deleteUser(currentQbUserID).performAsync(callback);
     }
 
-    public void loadUsersByTag(final String tag, final QBEntityCallback<ArrayList<QBUser>> callback) {
+    public void loadUsers( final QBEntityCallback<ArrayList<QBUser>> callback) {
         QBPagedRequestBuilder requestBuilder = new QBPagedRequestBuilder();
-        List<String> tags = new LinkedList<>();
-        tags.add(tag);
-
         QBUsers.getUsers(requestBuilder).performAsync(callback);
     }
 
