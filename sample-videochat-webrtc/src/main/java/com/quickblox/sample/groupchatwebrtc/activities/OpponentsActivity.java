@@ -270,7 +270,9 @@ public class OpponentsActivity extends BaseActivity {
 
         WebRtcSessionManager.getInstance(this).setCurrentSession(newQbRtcSession);
 
-        PushNotificationSender.sendPushMessage(opponentsList, currentUser.getFullName());
+        String fullName = currentUser.getFullName();
+
+        PushNotificationSender.sendPushMessage(opponentsList, fullName);
 
         CallActivity.start(this, false);
         Log.d(TAG, "conferenceType = " + conferenceType);

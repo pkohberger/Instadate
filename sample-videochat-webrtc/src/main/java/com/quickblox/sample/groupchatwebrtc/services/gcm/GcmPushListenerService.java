@@ -28,11 +28,11 @@ public class GcmPushListenerService extends GcmListenerService {
         Log.v(TAG, "From: " + from);
         Log.v(TAG, "Message: " + message);
 
-        this.showNotification();
+        this.showNotification(message);
 
         SharedPrefsHelper sharedPrefsHelper = SharedPrefsHelper.getInstance();
         if (sharedPrefsHelper.hasQbUser()) {
-            Log.d(TAG, "App have logined user");
+            Log.d(TAG, "App has logged in user");
             QBUser qbUser = sharedPrefsHelper.getQbUser();
             startLoginService(qbUser);
         }
@@ -42,12 +42,12 @@ public class GcmPushListenerService extends GcmListenerService {
         CallService.start(this, qbUser);
     }
 
-    public void showNotification() {
+    public void showNotification(String from) {
         PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0);
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(getApplicationContext().getApplicationInfo().icon)
-                .setContentTitle("Title")
-                .setContentText("Text")
+                .setContentTitle("Call from:")
+                .setContentText(from)
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .build();
