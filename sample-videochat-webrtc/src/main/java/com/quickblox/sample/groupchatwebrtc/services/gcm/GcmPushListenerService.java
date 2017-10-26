@@ -40,13 +40,13 @@ public class GcmPushListenerService extends GcmListenerService {
         CallService.start(this, qbUser);
     }
 
-    public void showNotification(String from) {
+    public void showNotification(String message) {
 
         Notification notification = new NotificationCompat.Builder(this)
-                .setSmallIcon(getApplicationContext().getApplicationInfo().icon)
-                .setContentTitle(from + " called.")
-                .setAutoCancel(true)
-                .build();
+            .setSmallIcon(getApplicationContext().getApplicationInfo().icon)
+            .setContentTitle(message)
+            .setAutoCancel(true)
+            .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(0, notification);
