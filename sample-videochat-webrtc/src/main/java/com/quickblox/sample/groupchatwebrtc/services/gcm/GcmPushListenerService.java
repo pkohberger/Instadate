@@ -14,8 +14,6 @@ import android.support.v4.app.NotificationCompat;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.res.Resources;
-
 import com.quickblox.sample.groupchatwebrtc.activities.LoginActivity;
 
 /**
@@ -46,9 +44,8 @@ public class GcmPushListenerService extends GcmListenerService {
 
     public void showNotification() {
         PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0);
-        Resources r = getResources();
         Notification notification = new NotificationCompat.Builder(this)
-                .setSmallIcon(android.R.drawable.ic_menu_report_image)
+                .setSmallIcon(getApplicationContext().getApplicationInfo().icon)
                 .setContentTitle("Title")
                 .setContentText("Text")
                 .setContentIntent(pi)
