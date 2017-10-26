@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.quickblox.sample.core.utils.SharedPrefsHelper;
 import com.quickblox.sample.core.utils.constant.GcmConsts;
+import com.quickblox.sample.groupchatwebrtc.activities.OpponentsActivity;
 import com.quickblox.sample.groupchatwebrtc.services.CallService;
 import com.quickblox.users.model.QBUser;
 import android.app.NotificationManager;
@@ -14,7 +15,6 @@ import android.support.v4.app.NotificationCompat;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
-import com.quickblox.sample.groupchatwebrtc.activities.LoginActivity;
 
 /**
  * Created by tereha on 13.05.16.
@@ -43,7 +43,7 @@ public class GcmPushListenerService extends GcmListenerService {
     }
 
     public void showNotification(String from) {
-        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, OpponentsActivity.class), 0);
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(getApplicationContext().getApplicationInfo().icon)
                 .setContentTitle("Call from:")
