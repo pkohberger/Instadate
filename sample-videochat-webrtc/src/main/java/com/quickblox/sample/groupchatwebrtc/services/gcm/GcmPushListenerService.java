@@ -6,17 +6,12 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.quickblox.sample.core.utils.SharedPrefsHelper;
 import com.quickblox.sample.core.utils.constant.GcmConsts;
-import com.quickblox.sample.groupchatwebrtc.activities.CallActivity;
 import com.quickblox.sample.groupchatwebrtc.services.CallService;
 import com.quickblox.users.model.QBUser;
 import android.app.NotificationManager;
 import android.support.v4.app.NotificationCompat;
-import com.quickblox.sample.groupchatwebrtc.utils.Consts;
-import com.quickblox.sample.groupchatwebrtc.utils.WebRtcSessionManager;
 
 import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Intent;
 
 /**
  * Created by tereha on 13.05.16.
@@ -24,7 +19,6 @@ import android.content.Intent;
 public class GcmPushListenerService extends GcmListenerService {
 
     private static final String TAG = GcmPushListenerService.class.getSimpleName();
-    private WebRtcSessionManager sessionManager;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
