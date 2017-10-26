@@ -12,6 +12,7 @@ import com.quickblox.users.model.QBUser;
 import android.app.NotificationManager;
 import android.support.v4.app.NotificationCompat;
 import com.quickblox.sample.groupchatwebrtc.utils.Consts;
+import com.quickblox.sample.groupchatwebrtc.utils.WebRtcSessionManager;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -21,7 +22,9 @@ import android.content.Intent;
  * Created by tereha on 13.05.16.
  */
 public class GcmPushListenerService extends GcmListenerService {
+
     private static final String TAG = GcmPushListenerService.class.getSimpleName();
+    private WebRtcSessionManager sessionManager;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
@@ -44,18 +47,15 @@ public class GcmPushListenerService extends GcmListenerService {
     }
 
     public void showNotification(String from) {
-        Intent intent = new Intent(this, CallActivity.class);
-        intent.putExtra(Consts.EXTRA_IS_INCOMING_CALL,true);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(getApplicationContext().getApplicationInfo().icon)
-                .setContentTitle("Call from:")
-                .setContentText(from)
-                .setContentIntent(pi)
+                .setContentTitle(from + " called.")
                 .setAutoCancel(true)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(0, notification);
+
     }
 }
