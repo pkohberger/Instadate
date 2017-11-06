@@ -1,10 +1,16 @@
 package com.quickblox.sample.groupchatwebrtc.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -12,6 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
@@ -20,7 +30,6 @@ import com.quickblox.core.helper.Utils;
 import com.quickblox.sample.core.utils.KeyboardUtils;
 import com.quickblox.sample.core.utils.SharedPrefsHelper;
 import com.quickblox.sample.core.utils.Toaster;
-import com.quickblox.sample.core.utils.configs.CoreConfigUtils;
 import com.quickblox.sample.groupchatwebrtc.R;
 import com.quickblox.sample.groupchatwebrtc.services.CallService;
 import com.quickblox.sample.groupchatwebrtc.utils.Consts;
@@ -29,16 +38,29 @@ import com.quickblox.sample.groupchatwebrtc.utils.UsersUtils;
 import com.quickblox.sample.groupchatwebrtc.utils.ValidationUtils;
 import com.quickblox.users.model.QBUser;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class LoginActivity extends BaseActivity {
 
-    private String TAG = LoginActivity.class.getSimpleName();
-
     private String userPassword;
-
     private EditText userNameEditText;
     private EditText userPasswordEditText;
-
+    private Button TakePortrait;
     private QBUser userForSave;
+    private ImageView imageView;
+    private static final int REQUEST_EXTERNAL_PERMISSIONS = 1;
+    String mCurrentPhotoPath;
+    private static String[] PERMISSIONS = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+    };
+
 
     public static void start(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -49,13 +71,31 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        verifyPermissions(this);
         initUI();
     }
 
     @Override
     protected View getSnackbarAnchorView() {
         return findViewById(R.id.root_view_login_activity);
+    }
+
+    public static void verifyPermissions(Activity activity) {
+        // Check if we have read or write permission
+        int writePermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int readPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int cameraPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
+
+        if (writePermission != PackageManager.PERMISSION_GRANTED
+        ||  readPermission != PackageManager.PERMISSION_GRANTED
+        ||  cameraPermission != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS,
+                    REQUEST_EXTERNAL_PERMISSIONS
+            );
+        }
     }
 
     private void initUI() {
@@ -65,6 +105,44 @@ public class LoginActivity extends BaseActivity {
 
         userPasswordEditText = (EditText) findViewById(R.id.user_password);
         userPasswordEditText.addTextChangedListener(new LoginEditTextWatcher(userPasswordEditText));
+
+        TakePortrait = (Button)findViewById(R.id.TakePortrait);
+
+        TakePortrait.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                    File photoFile;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        photoFile = null;
+                    }
+                    if (photoFile != null) {
+                        /**
+                         * this stores the file on the phone in internal storage pictures directory:
+                         * cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                         **/
+                        startActivityForResult(cameraIntent, Consts.CAMERA_PIC_REQUEST);
+                    }
+                }
+            }
+
+            private File createImageFile() throws IOException {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "_";
+                File storageDir = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES);
+                File image = File.createTempFile(
+                    imageFileName,
+                    ".jpg",
+                    storageDir
+                );
+
+                mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+                return image;
+            }
+        });
 
     }
 
@@ -105,21 +183,21 @@ public class LoginActivity extends BaseActivity {
     private void startSignUpNewUser(final QBUser newUser) {
         showProgressDialog(R.string.dlg_creating_new_user);
         requestExecutor.signUpNewUser(newUser, new QBEntityCallback<QBUser>() {
-                    @Override
-                    public void onSuccess(QBUser result, Bundle params) {
-                        loginToChat(result);
-                    }
+                @Override
+                public void onSuccess(QBUser result, Bundle params) {
+                    loginToChat(result);
+                }
 
-                    @Override
-                    public void onError(QBResponseException e) {
-                        if (e.getHttpStatusCode() == Consts.ERR_LOGIN_ALREADY_TAKEN_HTTP_STATUS) {
-                            signInCreatedUser(newUser, true);
-                        } else {
-                            hideProgressDialog();
-                            Toaster.longToast(R.string.sign_up_error);
-                        }
+                @Override
+                public void onError(QBResponseException e) {
+                    if (e.getHttpStatusCode() == Consts.ERR_LOGIN_ALREADY_TAKEN_HTTP_STATUS) {
+                        signInCreatedUser(newUser, true);
+                    } else {
+                        hideProgressDialog();
+                        Toaster.longToast(R.string.sign_up_error);
                     }
                 }
+            }
         );
     }
 
@@ -178,6 +256,11 @@ public class LoginActivity extends BaseActivity {
                 Toaster.longToast(getString(R.string.login_chat_login_error) + errorMessage);
                 userNameEditText.setText(userForSave.getFullName());
             }
+        }
+        if(requestCode == Consts.CAMERA_PIC_REQUEST) {
+            Bitmap image = (Bitmap) data.getExtras().get("data");
+            imageView = (ImageView) findViewById(R.id.SelectedImage);
+            imageView.setImageBitmap(image);
         }
     }
 

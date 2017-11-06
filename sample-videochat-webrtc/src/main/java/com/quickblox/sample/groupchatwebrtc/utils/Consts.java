@@ -46,6 +46,8 @@ public interface Consts {
     String EXTRA_LOGIN_RESULT = "login_result";
     String EXTRA_LOGIN_ERROR_MESSAGE = "login_error_message";
     int EXTRA_LOGIN_RESULT_CODE = 1002;
+    int CAMERA_PIC_REQUEST = 1003;
+    int PICK_PHOTO_FOR_PORTRAIT = 1004;
 
     String[] PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 

@@ -5,13 +5,11 @@
     android:orientation="vertical"
     android:layout_marginLeft="@dimen/padding_start"
     >
-
     <TextView
         style="@style/MatchWidth"
         android:paddingTop="@dimen/padding_actionbar"
         android:text="@string/text_welcoming_message"
         />
-
     <EditText
         android:id="@+id/user_name"
         style="@style/MatchWidth"
@@ -20,7 +18,6 @@
         android:textSize="16sp"
         android:singleLine="true"
         />
-
     <EditText
         android:id="@+id/user_password"
         style="@style/MatchWidth"
@@ -30,5 +27,23 @@
         android:textSize="16sp"
         android:singleLine="true"
         />
-
+    <LinearLayout
+        android:id="@+id/button_wrap"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/TakePortrait"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="Take Pic"
+            />
+        <ImageView
+            android:id="@+id/SelectedImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_launcher"
+            />
+    </LinearLayout>
 </LinearLayout>
