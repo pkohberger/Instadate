@@ -114,10 +114,10 @@ public class LoginActivity extends BaseActivity {
         userPasswordEditText.addTextChangedListener(new LoginEditTextWatcher(userPasswordEditText));
 
         userAboutEditText = (EditText) findViewById(R.id.user_about);
-        userAboutEditText.addTextChangedListener(new LoginEditTextWatcher(userTitleEditText));
+        userAboutEditText.addTextChangedListener(new LoginEditTextWatcher(userAboutEditText));
 
         userTitleEditText = (EditText) findViewById(R.id.user_title);
-        userTitleEditText.addTextChangedListener(new LoginEditTextWatcher(userAboutEditText));
+        userTitleEditText.addTextChangedListener(new LoginEditTextWatcher(userTitleEditText));
 
         BirthdayLabel = (TextView)findViewById(R.id.BirthdayLabel);
 
@@ -165,7 +165,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean isEnteredUserPasswordValid() {
-        return ValidationUtils.isUserPasswordValid(this, userPasswordEditText);
+        return ValidationUtils.isUserPasswordValid(userPasswordEditText);
     }
 
     private boolean isEnteredUserTitleValid() {

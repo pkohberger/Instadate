@@ -15,14 +15,14 @@ import java.util.regex.Pattern;
  */
 public class ValidationUtils {
 
-    private static boolean isEnteredTextValid(Context context, EditText editText, int resFieldName, int maxLength, boolean checkName) {
+    private static boolean isEnteredTextValid(Context context, EditText editText, int resFieldName, int minLength, int maxLength, boolean checkName) {
 
         boolean isCorrect;
         Pattern p;
         if (checkName) {
-            p = Pattern.compile("^[a-zA-Z][a-zA-Z 0-9]{2," + (maxLength - 1) + "}+$");
+            p = Pattern.compile("^[a-zA-Z][a-zA-Z 0-9]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
         } else {
-            p = Pattern.compile("^[a-zA-Z][a-zA-Z0-9]{2," + (maxLength - 1) + "}+$");
+            p = Pattern.compile("^[a-zA-Z][a-zA-Z0-9]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
         }
 
         Matcher m = p.matcher(editText.getText().toString().trim());
@@ -31,7 +31,8 @@ public class ValidationUtils {
         if (!isCorrect) {
             editText.setError(String.format(context.getString(R.string.error_name_must_not_contain_special_characters_from_app),
                     context.getString(resFieldName),
-                    maxLength));
+                    String.valueOf(minLength),
+                    String.valueOf(maxLength)));
             return false;
         } else {
             return true;
@@ -39,21 +40,22 @@ public class ValidationUtils {
     }
 
     public static boolean isUserNameValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, R.string.field_name_user_name, 20, true);
+        return isEnteredTextValid(context, editText, R.string.field_name_user_name,3, 20, true);
     }
 
     public static boolean isUserAboutValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, R.string.field_name_user_about, 200, true);
+        return isEnteredTextValid(context, editText, R.string.field_name_user_about, 100,200, true);
     }
+
     public static boolean isUserTitleValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, R.string.field_name_user_title, 25, true);
+        return isEnteredTextValid(context, editText, R.string.field_name_user_title,15, 25, true);
     }
 
     public static boolean isUserBirthdayValid(Context context) {
         return true;
     }
 
-    public static boolean isUserPasswordValid(Context context, EditText editText) {
+    public static boolean isUserPasswordValid(EditText editText) {
 
         String password = editText.getText().toString().trim();
         Boolean isCorrect = true;

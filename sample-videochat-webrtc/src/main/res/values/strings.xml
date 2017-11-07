@@ -38,7 +38,7 @@
     <string name="field_name_user_title">Title</string>
     <string name="field_name_user_about">About</string>
 
-    <string name="error_name_must_not_contain_special_characters_from_app">%1$s must contain 3 &#8212; %2$s alphanumeric Latin characters without space, the first char must be a letter</string>
+    <string name="error_name_must_not_contain_special_characters_from_app">%1$s must contain %2$s &#8212; %3$s alphanumeric Latin characters without space, the first char must be a letter</string>
 
     <!--menu-->
     <string name="action_start_login">Done</string>
