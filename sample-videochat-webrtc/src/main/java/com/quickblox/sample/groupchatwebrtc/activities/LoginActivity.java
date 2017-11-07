@@ -359,11 +359,13 @@ public class LoginActivity extends BaseActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            String y = String.valueOf(year);
-            String m = (String.valueOf(month).length() == 1 ? '0'+String.valueOf(month) : String.valueOf(month));
-            String d = (String.valueOf(day).length() == 1 ? '0'+String.valueOf(day) : String.valueOf(day));
-            birthDate = y+m+d;
-            BirthdayLabel.setText(d+"/"+m+"/"+y);
+            //change month zero based to 1 based
+            month++;
+            String yyyy = String.valueOf(year);
+            String mm = (String.valueOf(month).length() == 1 ? '0'+String.valueOf(month) : String.valueOf(month));
+            String dd = (String.valueOf(day).length() == 1 ? '0'+String.valueOf(day) : String.valueOf(day));
+            birthDate = yyyy+mm+dd;
+            BirthdayLabel.setText(mm+"/"+dd+"/"+yyyy);
         }
     }
 }
