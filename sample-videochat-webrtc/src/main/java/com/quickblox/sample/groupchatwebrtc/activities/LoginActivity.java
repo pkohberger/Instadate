@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -25,7 +24,8 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.widget.TextView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
@@ -42,10 +42,8 @@ import com.quickblox.sample.groupchatwebrtc.utils.UsersUtils;
 import com.quickblox.sample.groupchatwebrtc.utils.ValidationUtils;
 import com.quickblox.users.model.QBUser;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +55,9 @@ public class LoginActivity extends BaseActivity {
     private EditText userPasswordEditText;
     private Button TakePortrait;
     private QBUser userForSave;
-    private ImageView imageView;
+    private CircleImageView imageView;
+    protected static TextView BirthdayLabel;
+    protected static String birthDate;
     private static final int REQUEST_EXTERNAL_PERMISSIONS = 1;
     String mCurrentPhotoPath;
     private static String[] PERMISSIONS = {
@@ -86,7 +86,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     public static void verifyPermissions(Activity activity) {
-        // Check if we have read or write permission
+
         int writePermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int readPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
         int cameraPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
@@ -110,6 +110,8 @@ public class LoginActivity extends BaseActivity {
 
         userPasswordEditText = (EditText) findViewById(R.id.user_password);
         userPasswordEditText.addTextChangedListener(new LoginEditTextWatcher(userPasswordEditText));
+
+        BirthdayLabel = (TextView)findViewById(R.id.BirthdayLabel);
 
         TakePortrait = (Button)findViewById(R.id.TakePortrait);
 
@@ -264,7 +266,7 @@ public class LoginActivity extends BaseActivity {
         }
         if(requestCode == Consts.CAMERA_PIC_REQUEST) {
             Bitmap image = (Bitmap) data.getExtras().get("data");
-            imageView = (ImageView) findViewById(R.id.SelectedImage);
+            imageView = (CircleImageView) findViewById(R.id.SelectedImage);
             imageView.setImageBitmap(image);
         }
     }
@@ -347,18 +349,21 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
+
             final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
 
-            // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
+            String y = String.valueOf(year);
+            String m = (String.valueOf(month).length() == 1 ? '0'+String.valueOf(month) : String.valueOf(month));
+            String d = (String.valueOf(day).length() == 1 ? '0'+String.valueOf(day) : String.valueOf(day));
+            birthDate = y+m+d;
+            BirthdayLabel.setText(d+"/"+m+"/"+y);
         }
     }
 }

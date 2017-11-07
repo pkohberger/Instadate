@@ -22,48 +22,97 @@
         android:id="@+id/user_password"
         style="@style/MatchWidth"
         android:paddingTop="16dp"
-        android:hint="User password"
+        android:hint="User Password"
         android:inputType="textPassword"
         android:textSize="16sp"
         android:singleLine="true"
         />
     <LinearLayout
         android:id="@+id/take_pic_wrap"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_alignParentBottom="true">
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:padding="6dp"
+        android:weightSum="2">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_weight="1"
+            android:gravity="center">
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/SelectedImage"
+                android:layout_width="65dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_width="5dp"
+                app:civ_border_color="@color/white"/>
+            </LinearLayout>
         <Button
             android:id="@+id/TakePortrait"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" android:text="Take Picture"
-            />
-        <ImageView
-            android:id="@+id/SelectedImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_launcher"
+            android:text="Take Picture"
+            android:textColor="@color/white"
+            android:background="@drawable/button_green"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/set_birthday_wrap"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_alignParentBottom="true">
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:padding="6dp"
+        android:weightSum="2">
+        <TextView
+            android:id="@+id/BirthdayLabel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="MM/DD/YYYY"
+            android:textColor="@color/green"
+            />
         <Button
             android:id="@+id/SetBirthday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:layout_weight="1"
-            android:onClick="showDatePickerDialog"
             android:text="Set Birthday"
-            />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@mipmap/ic_launcher"
+            android:textColor="@color/white"
+            android:background="@drawable/button_green"
+            android:onClick="showDatePickerDialog"
             />
     </LinearLayout>
+    <EditText
+        android:id="@+id/user_title"
+        style="@style/MatchWidth"
+        android:paddingTop="@dimen/padding_top"
+        android:hint="Title"
+        android:textSize="16sp"
+        android:singleLine="true"
+        />
+    <EditText
+        android:id="@+id/user_about"
+        style="@style/MatchWidth"
+        android:inputType="textMultiLine"
+        android:lines="8"
+        android:paddingTop="16dp"
+        android:hint="About"
+        android:textSize="16sp"
+        android:singleLine="true"
+        android:gravity="bottom"
+        />
 </LinearLayout>
