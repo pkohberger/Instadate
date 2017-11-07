@@ -52,6 +52,8 @@ public class LoginActivity extends BaseActivity {
 
     private String userPassword;
     private EditText userNameEditText;
+    private EditText userAboutEditText;
+    private EditText userTitleEditText;
     private EditText userPasswordEditText;
     private Button TakePortrait;
     private QBUser userForSave;
@@ -111,6 +113,12 @@ public class LoginActivity extends BaseActivity {
         userPasswordEditText = (EditText) findViewById(R.id.user_password);
         userPasswordEditText.addTextChangedListener(new LoginEditTextWatcher(userPasswordEditText));
 
+        userAboutEditText = (EditText) findViewById(R.id.user_about);
+        userAboutEditText.addTextChangedListener(new LoginEditTextWatcher(userTitleEditText));
+
+        userTitleEditText = (EditText) findViewById(R.id.user_title);
+        userTitleEditText.addTextChangedListener(new LoginEditTextWatcher(userAboutEditText));
+
         BirthdayLabel = (TextView)findViewById(R.id.BirthdayLabel);
 
         TakePortrait = (Button)findViewById(R.id.TakePortrait);
@@ -119,35 +127,8 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    File photoFile;
-                    try {
-                        photoFile = createImageFile();
-                    } catch (IOException ex) {
-                        photoFile = null;
-                    }
-                    if (photoFile != null) {
-                        /**
-                         * this stores the file on the phone in internal storage pictures directory:
-                         * cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                         **/
-                        startActivityForResult(cameraIntent, Consts.CAMERA_PIC_REQUEST);
-                    }
+                    startActivityForResult(cameraIntent, Consts.CAMERA_PIC_REQUEST);
                 }
-            }
-
-            private File createImageFile() throws IOException {
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "_";
-                File storageDir = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES);
-                File image = File.createTempFile(
-                    imageFileName,
-                    ".jpg",
-                    storageDir
-                );
-
-                mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-                return image;
             }
         });
 
@@ -164,7 +145,11 @@ public class LoginActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_login_user_done:
-                if (isEnteredUserNameValid() && isEnteredUserPasswordValid()) {
+                if (isEnteredUserNameValid()
+                && isEnteredUserPasswordValid()
+                && isEnteredUserTitleValid()
+                && isEnteredUserAboutValid()
+                && isEnteredUserBirthdayValid()) {
                     hideKeyboard();
                     startSignUpNewUser(createUserWithEnteredData());
                 }
@@ -181,6 +166,18 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isEnteredUserPasswordValid() {
         return ValidationUtils.isUserPasswordValid(this, userPasswordEditText);
+    }
+
+    private boolean isEnteredUserTitleValid() {
+        return ValidationUtils.isUserTitleValid(this, userTitleEditText);
+    }
+
+    private boolean isEnteredUserAboutValid() {
+        return ValidationUtils.isUserAboutValid(this, userAboutEditText);
+    }
+
+    private boolean isEnteredUserBirthdayValid() {
+        return ValidationUtils.isUserBirthdayValid(this);
     }
 
     private void hideKeyboard() {

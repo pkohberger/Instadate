@@ -8,7 +8,6 @@ import com.quickblox.sample.groupchatwebrtc.R;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.quickblox.sample.groupchatwebrtc.R.string.field_name_chat_room_name;
 
 
 /**
@@ -41,6 +40,17 @@ public class ValidationUtils {
 
     public static boolean isUserNameValid(Context context, EditText editText) {
         return isEnteredTextValid(context, editText, R.string.field_name_user_name, 20, true);
+    }
+
+    public static boolean isUserAboutValid(Context context, EditText editText) {
+        return isEnteredTextValid(context, editText, R.string.field_name_user_about, 200, true);
+    }
+    public static boolean isUserTitleValid(Context context, EditText editText) {
+        return isEnteredTextValid(context, editText, R.string.field_name_user_title, 25, true);
+    }
+
+    public static boolean isUserBirthdayValid(Context context) {
+        return true;
     }
 
     public static boolean isUserPasswordValid(Context context, EditText editText) {
