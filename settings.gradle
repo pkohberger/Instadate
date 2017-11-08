@@ -1,2 +1,2 @@
-include 'sample-core'
-include 'sample-videochat-webrtc'
+include 'instadate-core'
+include 'instadate-videochat-webrtc'
