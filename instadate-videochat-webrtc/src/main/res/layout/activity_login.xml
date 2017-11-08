@@ -35,34 +35,51 @@
         android:gravity="center_horizontal"
         android:padding="6dp"
         android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:layout_weight="1"
+                android:gravity="center">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/SelectedImage"
+                    android:layout_width="65dp"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:src="@mipmap/ic_launcher"
+                    app:civ_border_width="5dp"
+                    app:civ_border_color="@color/white"/>
+            </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
             android:layout_weight="1"
             android:gravity="center">
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/SelectedImage"
-                android:layout_width="65dp"
+            <Button
+                android:id="@+id/TakePortrait"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:src="@mipmap/ic_launcher"
-                app:civ_border_width="5dp"
-                app:civ_border_color="@color/white"/>
-            </LinearLayout>
-        <Button
-            android:id="@+id/TakePortrait"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:layout_weight="1"
-            android:text="Take Picture"
-            android:textColor="@color/white"
-            android:background="@drawable/button_green"
-            />
+                android:layout_weight="1"
+                android:background="@drawable/button_green"
+                android:layout_marginRight="1dp"
+                android:text="Take Pic"
+                android:textColor="@color/white"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/SelectPortrait"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/button_green"
+                android:text="Select Pic"
+                android:textColor="@color/white"
+                android:textSize="10dp" />
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/set_birthday_wrap"

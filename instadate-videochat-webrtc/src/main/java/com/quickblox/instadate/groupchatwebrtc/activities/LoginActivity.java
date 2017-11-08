@@ -8,21 +8,25 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.graphics.Bitmap;
 import android.widget.TextView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -42,26 +46,35 @@ import com.quickblox.instadate.groupchatwebrtc.utils.UsersUtils;
 import com.quickblox.instadate.groupchatwebrtc.utils.ValidationUtils;
 import com.quickblox.users.model.QBUser;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class LoginActivity extends BaseActivity {
 
     private String userPassword;
+
     private EditText userNameEditText;
+
     private EditText userAboutEditText;
+
     private EditText userTitleEditText;
+
     private EditText userPasswordEditText;
-    private Button TakePortrait;
+
+    private Button SelectPortrait;
+
     private QBUser userForSave;
+
     private CircleImageView imageView;
+
     protected static TextView BirthdayLabel;
+
     protected static String birthDate;
+
     private static final int REQUEST_EXTERNAL_PERMISSIONS = 1;
-    String mCurrentPhotoPath;
+
+    private Button TakePortrait;
+
     private static String[] PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -123,12 +136,19 @@ public class LoginActivity extends BaseActivity {
 
         TakePortrait = (Button)findViewById(R.id.TakePortrait);
 
+        SelectPortrait = (Button)findViewById(R.id.SelectPortrait);
+
         TakePortrait.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(cameraIntent, Consts.CAMERA_PIC_REQUEST);
-                }
+                startActivityForResult(cameraIntent, Consts.CAMERA_PIC_REQUEST);
+            }
+        });
+
+        SelectPortrait.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , Consts.PICK_PHOTO_FOR_PORTRAIT);
             }
         });
 
@@ -145,11 +165,7 @@ public class LoginActivity extends BaseActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_login_user_done:
-                if (isEnteredUserNameValid()
-                && isEnteredUserPasswordValid()
-                && isEnteredUserTitleValid()
-                && isEnteredUserAboutValid()
-                && isEnteredUserBirthdayValid()) {
+                if (areEnteredUserInputsForSignUpValid()) {
                     hideKeyboard();
                     startSignUpNewUser(createUserWithEnteredData());
                 }
@@ -178,6 +194,24 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isEnteredUserBirthdayValid() {
         return ValidationUtils.isUserBirthdayValid(this);
+    }
+
+    private boolean areEnteredUserInputsForSignUpValid() {
+        /**
+         * we want to run all validating methods and set errors
+         * so the user sees what inputs are wrong
+         */
+        Boolean isValidName = isEnteredUserNameValid();
+        Boolean isValidPass = isEnteredUserPasswordValid();
+        Boolean isValidTitle = isEnteredUserTitleValid();
+        Boolean isValidAbout = isEnteredUserAboutValid();
+        Boolean isValidBirth = isEnteredUserBirthdayValid();
+
+        if(!isValidName || !isValidPass || !isValidTitle || !isValidAbout || !isValidBirth) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void hideKeyboard() {
@@ -261,11 +295,82 @@ public class LoginActivity extends BaseActivity {
                 userNameEditText.setText(userForSave.getFullName());
             }
         }
-        if(requestCode == Consts.CAMERA_PIC_REQUEST) {
+
+        if(requestCode == Consts.CAMERA_PIC_REQUEST && resultCode == RESULT_OK) {
             Bitmap image = (Bitmap) data.getExtras().get("data");
             imageView = (CircleImageView) findViewById(R.id.SelectedImage);
             imageView.setImageBitmap(image);
         }
+
+        if(requestCode == Consts.PICK_PHOTO_FOR_PORTRAIT && resultCode == RESULT_OK) {
+            try {
+                final Uri uri = data.getData();
+                Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                String imageAbs = getRealPathFromURI(this,uri);
+                image = modifyOrientation(image,imageAbs);
+                imageView = (CircleImageView) findViewById(R.id.SelectedImage);
+                imageView.setImageBitmap(image);
+            } catch (IOException ex) {
+               Log.d("",ex.getMessage());
+            }
+        }
+    }
+
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
+        try {
+            ExifInterface ei = new ExifInterface(image_absolute_path);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotate(bitmap, 90);
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotate(bitmap, 180);
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotate(bitmap, 270);
+
+                case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                    return flip(bitmap, true, false);
+
+                case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                    return flip(bitmap, false, true);
+
+                default:
+                    return bitmap;
+            }
+        } catch (IOException ex) {
+            String message = ex.getMessage();
+            Log.d("",message);
+            return null;
+        }
+    }
+
+    public static Bitmap rotate(Bitmap bitmap, float degrees) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degrees);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
+        Matrix matrix = new Matrix();
+        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
     private void signInCreatedUser(final QBUser user, final boolean deleteCurrentUser) {

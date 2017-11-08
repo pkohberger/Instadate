@@ -15,14 +15,16 @@ import java.util.regex.Pattern;
  */
 public class ValidationUtils {
 
-    private static boolean isEnteredTextValid(Context context, EditText editText, int resFieldName, int minLength, int maxLength, boolean checkName) {
+    private static boolean isEnteredTextValid(Context context, EditText editText, int resFieldName, int minLength, int maxLength, boolean allowSpaces) {
 
         boolean isCorrect;
         Pattern p;
-        if (checkName) {
+        String withoutSpace = ",";
+        if (allowSpaces) {
             p = Pattern.compile("^[a-zA-Z][a-zA-Z 0-9]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
         } else {
             p = Pattern.compile("^[a-zA-Z][a-zA-Z0-9]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
+            withoutSpace = " without space,";
         }
 
         Matcher m = p.matcher(editText.getText().toString().trim());
@@ -32,7 +34,8 @@ public class ValidationUtils {
             editText.setError(String.format(context.getString(R.string.error_name_must_not_contain_special_characters_from_app),
                     context.getString(resFieldName),
                     String.valueOf(minLength),
-                    String.valueOf(maxLength)));
+                    String.valueOf(maxLength),
+                    withoutSpace));
             return false;
         } else {
             return true;
@@ -40,7 +43,7 @@ public class ValidationUtils {
     }
 
     public static boolean isUserNameValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, R.string.field_name_user_name,3, 20, true);
+        return isEnteredTextValid(context, editText, R.string.field_name_user_name,3, 20, false);
     }
 
     public static boolean isUserAboutValid(Context context, EditText editText) {
