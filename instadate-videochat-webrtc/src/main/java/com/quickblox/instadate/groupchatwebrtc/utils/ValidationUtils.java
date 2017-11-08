@@ -15,13 +15,13 @@ import java.util.regex.Pattern;
  */
 public class ValidationUtils {
 
-    private static boolean isEnteredTextValid(Context context, EditText editText, int resFieldName, int minLength, int maxLength, boolean allowSpaces) {
+    private static boolean isEnteredTextValid(Context context, EditText editText, int resFieldName, int minLength, int maxLength, boolean allowSpacesAndChars) {
 
         boolean isCorrect;
         Pattern p;
         String withoutSpace = ",";
-        if (allowSpaces) {
-            p = Pattern.compile("^[a-zA-Z][a-zA-Z 0-9]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
+        if (allowSpacesAndChars) {
+            p = Pattern.compile("^[a-zA-Z][a-zA-Z 0-9.!?]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
         } else {
             p = Pattern.compile("^[a-zA-Z][a-zA-Z0-9]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
             withoutSpace = " without space,";
@@ -47,15 +47,11 @@ public class ValidationUtils {
     }
 
     public static boolean isUserAboutValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, R.string.field_name_user_about, 100,200, true);
+        return isEnteredTextValid(context, editText, R.string.field_name_user_about, 50,200, true);
     }
 
     public static boolean isUserTitleValid(Context context, EditText editText) {
         return isEnteredTextValid(context, editText, R.string.field_name_user_title,15, 25, true);
-    }
-
-    public static boolean isUserBirthdayValid(Context context) {
-        return true;
     }
 
     public static boolean isUserPasswordValid(EditText editText) {

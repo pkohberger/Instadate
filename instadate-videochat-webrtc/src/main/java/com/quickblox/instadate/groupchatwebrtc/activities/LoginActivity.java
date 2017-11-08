@@ -65,11 +65,11 @@ public class LoginActivity extends BaseActivity {
 
     private QBUser userForSave;
 
-    private CircleImageView imageView;
+    private CircleImageView imageView = null;
 
     protected static TextView BirthdayLabel;
 
-    protected static String birthDate;
+    protected static String birthDate = null;
 
     private static final int REQUEST_EXTERNAL_PERMISSIONS = 1;
 
@@ -193,21 +193,52 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean isEnteredUserBirthdayValid() {
-        return ValidationUtils.isUserBirthdayValid(this);
+        /**
+         * not using validation class because using toast for message
+         */
+        if(birthDate == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isEnteredUserPicValid() {
+        /**
+         * not using validation class because using toast for message
+         */
+        if(imageView == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    private void showPictureAndOrBirthdayToastIfError() {
+        if(!isEnteredUserPicValid() && !isEnteredUserBirthdayValid()) {
+            Toaster.longToast("User Picture and Birthday are Required");
+        } else if(!isEnteredUserPicValid()) {
+            Toaster.longToast("User Picture is Required");
+        } else if(!isEnteredUserBirthdayValid()) {
+            Toaster.longToast("User Birthday is Required");
+        }
     }
 
     private boolean areEnteredUserInputsForSignUpValid() {
         /**
-         * we want to run all validating methods and set errors
-         * so the user sees what inputs are wrong
+         * we want to run ALL validating methods and set errors
+         * so the user sees what inputs are wrong at once
+         * instead of one at a time
          */
         Boolean isValidName = isEnteredUserNameValid();
         Boolean isValidPass = isEnteredUserPasswordValid();
         Boolean isValidTitle = isEnteredUserTitleValid();
         Boolean isValidAbout = isEnteredUserAboutValid();
         Boolean isValidBirth = isEnteredUserBirthdayValid();
+        Boolean isValidPic = isEnteredUserPicValid();
 
-        if(!isValidName || !isValidPass || !isValidTitle || !isValidAbout || !isValidBirth) {
+        showPictureAndOrBirthdayToastIfError();
+
+        if(!isValidName || !isValidPass || !isValidTitle || !isValidAbout || !isValidBirth || !isValidPic) {
             return false;
         } else {
             return true;
