@@ -19,12 +19,13 @@ public class ValidationUtils {
 
         boolean isCorrect;
         Pattern p;
-        String withoutSpace = ",";
+        String additionalBlurb;
         if (allowSpacesAndChars) {
-            p = Pattern.compile("^[a-zA-Z][a-zA-Z 0-9.!?]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
+            p = Pattern.compile("^[a-zA-Z 0-9\\\\,\\\\.\\\\!\\\\?\\\\:\\\\;\\\\(\\\\)]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
+            additionalBlurb = " with the following special characters allowed: ( , . ! ? : ; ),";
         } else {
             p = Pattern.compile("^[a-zA-Z][a-zA-Z0-9]{"+String.valueOf(minLength-1)+"," + (maxLength - 1) + "}+$");
-            withoutSpace = " without space,";
+            additionalBlurb = " without space,";
         }
 
         Matcher m = p.matcher(editText.getText().toString().trim());
@@ -35,7 +36,7 @@ public class ValidationUtils {
                     context.getString(resFieldName),
                     String.valueOf(minLength),
                     String.valueOf(maxLength),
-                    withoutSpace));
+                    additionalBlurb));
             return false;
         } else {
             return true;
@@ -47,11 +48,11 @@ public class ValidationUtils {
     }
 
     public static boolean isUserAboutValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, R.string.field_name_user_about, 50,200, true);
+        return isEnteredTextValid(context, editText, R.string.field_name_user_about, 15,200, true);
     }
 
     public static boolean isUserTitleValid(Context context, EditText editText) {
-        return isEnteredTextValid(context, editText, R.string.field_name_user_title,15, 25, true);
+        return isEnteredTextValid(context, editText, R.string.field_name_user_title,5, 25, true);
     }
 
     public static boolean isUserPasswordValid(EditText editText) {
@@ -78,7 +79,7 @@ public class ValidationUtils {
         }
 
         if(isCorrect == false) {
-            editText.setError("There was a password error, password must contain 8 characters, at least 2 digits and may contain only letters and digits");
+            editText.setError("Password must contain 8 characters, at least 2 must be digits and may contain only alpha and numeric characters");
         }
 
         return isCorrect;
