@@ -31,13 +31,6 @@ import android.widget.Button;
 import android.graphics.Bitmap;
 import android.widget.TextView;
 
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpPost;
-import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
-import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.quickblox.core.QBEntityCallback;
@@ -258,40 +251,17 @@ public class LoginActivity extends BaseActivity {
         KeyboardUtils.hideKeyboard(userNameEditText);
     }
 
-    private void postDataToAPI(String file) {
-
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("");
-
-            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
-            entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-            entityBuilder.addTextBody("", "");
-
-            if(file != null)
-            {
-                //entityBuilder.addBinaryBody(IMAGE, file);
-            }
-
-            HttpEntity entity = entityBuilder.build();
-            post.setEntity(entity);
-            HttpResponse response = client.execute(post);
-            HttpEntity httpEntity = response.getEntity();
-            //result = EntityUtils.toString(httpEntity);
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private class InstadateAsyncTask extends AsyncTask<String, Integer, Double> {
+
         private QBUser qbUser;
+
         public InstadateAsyncTask (QBUser result){
             qbUser = result;
         }
+
         @Override
         protected Double doInBackground(String... params) {
+            requestExecutor.postQbUserToInstadateAPI();
             loginToChat(this.qbUser);
             return null;
         }
