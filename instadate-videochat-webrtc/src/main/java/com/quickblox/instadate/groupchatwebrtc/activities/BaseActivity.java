@@ -32,24 +32,28 @@ import com.quickblox.instadate.groupchatwebrtc.utils.Consts;
 public abstract class BaseActivity extends CoreBaseActivity implements LocationListener {
 
     SharedPrefsHelper sharedPrefsHelper;
+
     private ProgressDialog progressDialog;
+
     protected GooglePlayServicesHelper googlePlayServicesHelper;
+
     protected QBResRequestExecutor requestExecutor;
+
     protected Context context;
+
     protected String Location;
+
     private static final int REQUEST_EXTERNAL_PERMISSIONS = 1;
+
     private static String[] PERMISSIONS = {
+
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.CAMERA
-    };
 
-    @Override
-    public void onLocationChanged(final Location location) {
-        Location = location.getLatitude() +" "+ location.getLongitude();
-    }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,12 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
         sharedPrefsHelper = SharedPrefsHelper.getInstance();
         googlePlayServicesHelper = new GooglePlayServicesHelper();
 
+        checkAndRequestPermissions();
+
+    }
+
+    public void checkAndRequestPermissions() {
+
         int locationFinePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int locationCoarsePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
         int writePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -66,10 +76,10 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
         int cameraPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
 
         if (writePermission != PackageManager.PERMISSION_GRANTED
-        ||  readPermission != PackageManager.PERMISSION_GRANTED
-        ||  cameraPermission != PackageManager.PERMISSION_GRANTED
-        ||  locationFinePermission != PackageManager.PERMISSION_GRANTED
-        ||  locationCoarsePermission != PackageManager.PERMISSION_GRANTED) {
+                ||  readPermission != PackageManager.PERMISSION_GRANTED
+                ||  cameraPermission != PackageManager.PERMISSION_GRANTED
+                ||  locationFinePermission != PackageManager.PERMISSION_GRANTED
+                ||  locationCoarsePermission != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(
                     this,
@@ -78,6 +88,12 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
             );
 
         }
+
+    }
+
+    @Override
+    public void onLocationChanged(final Location location) {
+        Location = location.getLatitude() +"|"+ location.getLongitude();
     }
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -89,7 +105,7 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
                     String bestProvider =locationManager.getBestProvider(criteria,true);
                     try {
                         Location lastKnownLocation = locationManager.getLastKnownLocation(bestProvider);
-                        Location = lastKnownLocation.getLatitude() + " " + lastKnownLocation.getLongitude();
+                        Location = lastKnownLocation.getLatitude() + "|" + lastKnownLocation.getLongitude();
                     }catch(SecurityException e) {
                         Log.i("",e.getMessage());
                     }

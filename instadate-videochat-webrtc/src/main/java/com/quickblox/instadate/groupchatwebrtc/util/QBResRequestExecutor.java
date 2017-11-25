@@ -1,5 +1,7 @@
 package com.quickblox.instadate.groupchatwebrtc.util;
 
+import android.graphics.Bitmap;
+
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.request.QBPagedRequestBuilder;
 import com.quickblox.users.QBUsers;
@@ -7,6 +9,8 @@ import com.quickblox.users.model.QBUser;
 
 import com.quickblox.instadate.groupchatwebrtc.utils.Consts;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,9 +18,11 @@ import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
 import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 /**
  * Created by tereha on 26.04.16.
@@ -45,7 +51,7 @@ public class QBResRequestExecutor {
         QBUsers.getUsersByIDs(usersIDs, null).performAsync(callback);
     }
 
-    public void postQbUserToInstadateAPI(String QbId,String AccessToken,String Birthday,String Title,String About,String Location) {
+    public void postQbUserToInstadateAPI(Bitmap Image, String QbId, String AccessToken, String Birthday, String Title, String About, String Location) {
 
         try {
             HttpClient client = new DefaultHttpClient();
@@ -63,9 +69,13 @@ public class QBResRequestExecutor {
             entityBuilder.addTextBody("About", About);
             entityBuilder.addTextBody("Location", Location);
 
-           //if(file != null)
+           if(Image != null)
             {
-                //entityBuilder.addBinaryBody(IMAGE, file);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                Image.compress(Bitmap.CompressFormat.JPEG, 0, bos);
+                byte[] bmData = bos.toByteArray();
+                ByteArrayInputStream bs = new ByteArrayInputStream(bmData);
+                entityBuilder.addBinaryBody("UploadFile", bs, ContentType.DEFAULT_BINARY, "UploadFile.jpeg");
             }
 
             HttpEntity entity = entityBuilder.build();
@@ -76,7 +86,7 @@ public class QBResRequestExecutor {
 
             HttpEntity httpEntity = response.getEntity();
 
-            //result = EntityUtils.toString(httpEntity);
+            String result = EntityUtils.toString(httpEntity);
         }
         catch(Exception e) {
             e.printStackTrace();

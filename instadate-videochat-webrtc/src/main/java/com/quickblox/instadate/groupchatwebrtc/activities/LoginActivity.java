@@ -1,13 +1,10 @@
 package com.quickblox.instadate.groupchatwebrtc.activities;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
@@ -16,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -78,6 +74,8 @@ public class LoginActivity extends BaseActivity {
     protected static String birthDate = null;
 
     private Button TakePortrait;
+
+    private Bitmap PortraitImage = null;
 
 
     public static void start(Context context) {
@@ -241,6 +239,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         protected Double doInBackground(String... params) {
             requestExecutor.postQbUserToInstadateAPI(
+                PortraitImage,
                 qbUser.getId().toString(),
                 UsersUtils.HashId(qbUser.getId().toString()),
                 birthDate,
@@ -333,6 +332,7 @@ public class LoginActivity extends BaseActivity {
 
         if(requestCode == Consts.CAMERA_PIC_REQUEST && resultCode == RESULT_OK) {
             Bitmap image = (Bitmap) data.getExtras().get("data");
+            PortraitImage = image;
             imageView = (CircleImageView) findViewById(R.id.SelectedImage);
             imageView.setImageBitmap(image);
         }
@@ -341,6 +341,7 @@ public class LoginActivity extends BaseActivity {
             try {
                 final Uri uri = data.getData();
                 Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                PortraitImage = (Bitmap) image;
                 String imageAbs = getRealPathFromURI(this,uri);
                 image = modifyOrientation(image,imageAbs);
                 imageView = (CircleImageView) findViewById(R.id.SelectedImage);
