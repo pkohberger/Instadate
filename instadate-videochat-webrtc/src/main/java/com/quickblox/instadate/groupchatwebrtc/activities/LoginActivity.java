@@ -182,6 +182,8 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isEnteredUserPicValid() {
         /**
+         * @Todo Add Image Size Validation
+         * @Author Phil Kohberger
          * not using validation class because using toast for message
          */
         if(imageView == null) {
@@ -238,7 +240,11 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         protected Double doInBackground(String... params) {
-            requestExecutor.postQbUserToInstadateAPI(
+            /**
+             * @Todo Make this method Atomic, delete QBUser if Instadate api failed
+             * @Author Phil Kohberger
+             */
+            if(requestExecutor.postQbUserToInstadateAPI(
                 PortraitImage,
                 qbUser.getId().toString(),
                 UsersUtils.HashId(qbUser.getId().toString()),
@@ -246,8 +252,9 @@ public class LoginActivity extends BaseActivity {
                 userTitleEditTextString,
                 userAboutEditTextString,
                 Location
-            );
-            loginToChat(this.qbUser);
+            )) {
+                loginToChat(this.qbUser);
+            }
             return null;
         }
     }
@@ -341,9 +348,9 @@ public class LoginActivity extends BaseActivity {
             try {
                 final Uri uri = data.getData();
                 Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                PortraitImage = (Bitmap) image;
                 String imageAbs = getRealPathFromURI(this,uri);
                 image = modifyOrientation(image,imageAbs);
+                PortraitImage = (Bitmap) image;
                 imageView = (CircleImageView) findViewById(R.id.SelectedImage);
                 imageView.setImageBitmap(image);
             } catch (IOException ex) {

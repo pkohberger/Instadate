@@ -51,7 +51,7 @@ public class QBResRequestExecutor {
         QBUsers.getUsersByIDs(usersIDs, null).performAsync(callback);
     }
 
-    public void postQbUserToInstadateAPI(Bitmap Image, String QbId, String AccessToken, String Birthday, String Title, String About, String Location) {
+    public boolean postQbUserToInstadateAPI(Bitmap Image, String QbId, String AccessToken, String Birthday, String Title, String About, String Location) {
 
         try {
             HttpClient client = new DefaultHttpClient();
@@ -69,13 +69,12 @@ public class QBResRequestExecutor {
             entityBuilder.addTextBody("About", About);
             entityBuilder.addTextBody("Location", Location);
 
-           if(Image != null)
-            {
+           if(Image != null) {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                Image.compress(Bitmap.CompressFormat.JPEG, 0, bos);
+                Image.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                 byte[] bmData = bos.toByteArray();
                 ByteArrayInputStream bs = new ByteArrayInputStream(bmData);
-                entityBuilder.addBinaryBody("UploadFile", bs, ContentType.DEFAULT_BINARY, "UploadFile.jpeg");
+                entityBuilder.addBinaryBody("UploadFile", bs, ContentType.DEFAULT_BINARY, AccessToken + ".jpeg");
             }
 
             HttpEntity entity = entityBuilder.build();
@@ -87,9 +86,12 @@ public class QBResRequestExecutor {
             HttpEntity httpEntity = response.getEntity();
 
             String result = EntityUtils.toString(httpEntity);
+
+            return true;
         }
         catch(Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 }
