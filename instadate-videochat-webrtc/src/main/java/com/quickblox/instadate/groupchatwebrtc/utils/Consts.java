@@ -13,7 +13,7 @@ public interface Consts {
 
     String VERSION_NUMBER = "1.0";
 
-    String INSTADATE_API_HOST = "http://localhost:64739";
+    String INSTADATE_API_HOST = "http://localhost:8081";
 
     int CALL_ACTIVITY_CLOSE = 1000;
 

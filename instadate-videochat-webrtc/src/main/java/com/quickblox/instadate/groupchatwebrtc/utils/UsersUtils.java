@@ -7,8 +7,12 @@ import com.quickblox.instadate.core.utils.SharedPrefsHelper;
 import com.quickblox.instadate.groupchatwebrtc.db.QbUsersDbManager;
 import com.quickblox.users.model.QBUser;
 
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.security.MessageDigest;
 
 /**
  * Created by tereha on 09.06.16.
@@ -72,5 +76,17 @@ public class UsersUtils {
             dbManager = QbUsersDbManager.getInstance(context);
         }
         dbManager.clearDB();
+    }
+
+    public static String HashId(String pass)  {
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            byte[] data = pass.getBytes();
+            m.update(data,0,data.length);
+            BigInteger i = new BigInteger(1,m.digest());
+            return String.format("%1$032X", i);
+        } catch(NoSuchAlgorithmException e) {
+            return "";
+        }
     }
 }

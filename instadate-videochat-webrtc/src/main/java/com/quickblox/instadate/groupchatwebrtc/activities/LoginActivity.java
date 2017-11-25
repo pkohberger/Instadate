@@ -59,7 +59,11 @@ public class LoginActivity extends BaseActivity {
 
     private EditText userAboutEditText;
 
+    private String userAboutEditTextString;
+
     private EditText userTitleEditText;
+
+    private String userTitleEditTextString;
 
     private EditText userPasswordEditText;
 
@@ -73,15 +77,7 @@ public class LoginActivity extends BaseActivity {
 
     protected static String birthDate = null;
 
-    private static final int REQUEST_EXTERNAL_PERMISSIONS = 1;
-
     private Button TakePortrait;
-
-    private static String[] PERMISSIONS = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
-    };
 
 
     public static void start(Context context) {
@@ -93,31 +89,12 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        verifyPermissions(this);
         initUI();
     }
 
     @Override
     protected View getSnackbarAnchorView() {
         return findViewById(R.id.root_view_login_activity);
-    }
-
-    public static void verifyPermissions(Activity activity) {
-
-        int writePermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int readPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
-        int cameraPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
-
-        if (writePermission != PackageManager.PERMISSION_GRANTED
-        ||  readPermission != PackageManager.PERMISSION_GRANTED
-        ||  cameraPermission != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS,
-                    REQUEST_EXTERNAL_PERMISSIONS
-            );
-        }
     }
 
     private void initUI() {
@@ -243,6 +220,8 @@ public class LoginActivity extends BaseActivity {
         if(!isValidName || !isValidPass || !isValidTitle || !isValidAbout || !isValidBirth || !isValidPic) {
             return false;
         } else {
+            userTitleEditTextString = userTitleEditText.getText().toString().trim();
+            userAboutEditTextString = userAboutEditText.getText().toString().trim();
             return true;
         }
     }
@@ -261,7 +240,14 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         protected Double doInBackground(String... params) {
-            requestExecutor.postQbUserToInstadateAPI();
+            requestExecutor.postQbUserToInstadateAPI(
+                qbUser.getId().toString(),
+                UsersUtils.HashId(qbUser.getId().toString()),
+                birthDate,
+                userTitleEditTextString,
+                userAboutEditTextString,
+                Location
+            );
             loginToChat(this.qbUser);
             return null;
         }

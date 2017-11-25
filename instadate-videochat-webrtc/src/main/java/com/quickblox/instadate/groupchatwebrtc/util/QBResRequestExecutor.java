@@ -45,7 +45,7 @@ public class QBResRequestExecutor {
         QBUsers.getUsersByIDs(usersIDs, null).performAsync(callback);
     }
 
-    public void postQbUserToInstadateAPI() {
+    public void postQbUserToInstadateAPI(String QbId,String AccessToken,String Birthday,String Title,String About,String Location) {
 
         try {
             HttpClient client = new DefaultHttpClient();
@@ -56,7 +56,12 @@ public class QBResRequestExecutor {
 
             entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-            entityBuilder.addTextBody("", "");
+            entityBuilder.addTextBody("QbID", QbId);
+            entityBuilder.addTextBody("AccessToken", AccessToken);
+            entityBuilder.addTextBody("Birthday", Birthday);
+            entityBuilder.addTextBody("Title", Title);
+            entityBuilder.addTextBody("About", About);
+            entityBuilder.addTextBody("Location", Location);
 
            //if(file != null)
             {
