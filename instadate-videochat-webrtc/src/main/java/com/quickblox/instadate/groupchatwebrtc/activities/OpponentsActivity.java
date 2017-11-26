@@ -14,6 +14,7 @@ import com.crashlytics.android.Crashlytics;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.core.helper.StringifyArrayList;
 import com.quickblox.messages.services.SubscribeService;
 import com.quickblox.instadate.core.utils.SharedPrefsHelper;
 import com.quickblox.instadate.core.utils.Toaster;
@@ -121,14 +122,27 @@ public class OpponentsActivity extends BaseActivity {
         webRtcSessionManager = WebRtcSessionManager.getInstance(getApplicationContext());
     }
 
+    private QBUser getUserWithInstadateApiData(QBUser user) {
+        user.setCustomData("{data:'custom1'}");
+        return user;
+    }
+
     private void startLoadUsers() {
         showProgressDialog(R.string.dlg_loading_opponents);
         requestExecutor.loadUsers(new QBEntityCallback<ArrayList<QBUser>>() {
             @Override
             public void onSuccess(ArrayList<QBUser> result, Bundle params) {
                 hideProgressDialog();
-                dbManager.saveAllUsers(result, true);
-                initUsersList();
+                ArrayList<QBUser> newUserListWithApiData = new ArrayList<QBUser>();
+                for (int counter = 0; counter < result.size(); counter++) {
+                    newUserListWithApiData.add(getUserWithInstadateApiData(result.get(counter)));
+                }
+                try {
+                    dbManager.saveAllUsers(newUserListWithApiData, true);
+                    initUsersList();
+                } catch(Exception e) {
+                    String message = e.getMessage();
+                }
             }
 
             @Override
