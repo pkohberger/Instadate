@@ -45,7 +45,6 @@ import com.quickblox.instadate.groupchatwebrtc.utils.ValidationUtils;
 import com.quickblox.users.model.QBUser;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class LoginActivity extends BaseActivity {
