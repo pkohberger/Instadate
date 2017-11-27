@@ -115,8 +115,6 @@ public class QBResRequestExecutor {
 
             user.setCustomData(result);
 
-            EntityUtils.consume(httpEntity);
-
             return user;
 
         } catch(Exception e) {

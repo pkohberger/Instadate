@@ -11,6 +11,7 @@ import android.location.Location;
 import com.google.android.gms.location.LocationListener;
 
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
@@ -41,7 +42,7 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
 
     protected Context context;
 
-    protected String Location;
+    protected String Location = "";
 
     private static final int REQUEST_EXTERNAL_PERMISSIONS = 1;
 
@@ -69,26 +70,29 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
 
     public void checkAndRequestPermissions() {
 
-        int locationFinePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        int locationCoarsePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        int writePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int readPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        int cameraPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-        if (writePermission != PackageManager.PERMISSION_GRANTED
-                ||  readPermission != PackageManager.PERMISSION_GRANTED
-                ||  cameraPermission != PackageManager.PERMISSION_GRANTED
-                ||  locationFinePermission != PackageManager.PERMISSION_GRANTED
-                ||  locationCoarsePermission != PackageManager.PERMISSION_GRANTED) {
+            int locationFinePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+            int locationCoarsePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+            int writePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int readPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int cameraPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
 
-            ActivityCompat.requestPermissions(
-                    this,
-                    PERMISSIONS,
-                    REQUEST_EXTERNAL_PERMISSIONS
-            );
+            if (writePermission != PackageManager.PERMISSION_GRANTED
+                    ||  readPermission != PackageManager.PERMISSION_GRANTED
+                    ||  cameraPermission != PackageManager.PERMISSION_GRANTED
+                    ||  locationFinePermission != PackageManager.PERMISSION_GRANTED
+                    ||  locationCoarsePermission != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        PERMISSIONS,
+                        REQUEST_EXTERNAL_PERMISSIONS
+                );
+
+            }
 
         }
-
     }
 
     @Override
