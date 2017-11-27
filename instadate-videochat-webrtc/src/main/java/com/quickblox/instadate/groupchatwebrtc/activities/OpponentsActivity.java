@@ -123,7 +123,7 @@ public class OpponentsActivity extends BaseActivity {
         webRtcSessionManager = WebRtcSessionManager.getInstance(getApplicationContext());
     }
 
-    private class InstadateAsyncTask extends AsyncTask<String, Integer, Double> {
+    private class InstadateAsyncTask extends AsyncTask<String, Void, ArrayList<QBUser>> {
 
         private ArrayList<QBUser>  qbUserList;
 
@@ -132,7 +132,7 @@ public class OpponentsActivity extends BaseActivity {
         }
 
         @Override
-        protected Double doInBackground(String... params) {
+        protected ArrayList<QBUser> doInBackground(String... params) {
             try {
                 ArrayList<QBUser> newUserListWithApiData = new ArrayList<QBUser>();
                 for (int counter = 0; counter < qbUserList.size(); counter++) {
@@ -140,12 +140,17 @@ public class OpponentsActivity extends BaseActivity {
                         requestExecutor.getQbUserByIdFromInstadateAPISynchronous(qbUserList.get(counter))
                     );
                 }
-                dbManager.saveAllUsers(newUserListWithApiData, true);
-                initUsersList();
+                return newUserListWithApiData;
             } catch(Exception e) {
                 e.printStackTrace();
+                return null;
             }
-            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<QBUser> newUserListWithApiData) {
+            dbManager.saveAllUsers(newUserListWithApiData, true);
+            initUsersList();
         }
     }
 

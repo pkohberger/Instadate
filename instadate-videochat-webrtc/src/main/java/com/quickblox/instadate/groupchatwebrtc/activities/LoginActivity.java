@@ -45,6 +45,7 @@ import com.quickblox.instadate.groupchatwebrtc.utils.ValidationUtils;
 import com.quickblox.users.model.QBUser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class LoginActivity extends BaseActivity {
@@ -230,7 +231,7 @@ public class LoginActivity extends BaseActivity {
         KeyboardUtils.hideKeyboard(userNameEditText);
     }
 
-    private class InstadateAsyncTask extends AsyncTask<String, Integer, Double> {
+    private class InstadateAsyncTask extends AsyncTask<String, Void, Boolean> {
 
         private QBUser qbUser;
 
@@ -239,7 +240,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         @Override
-        protected Double doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
             /**
              * @Todo Make this method Atomic, delete QBUser if Instadate api failed
              * @Author Phil Kohberger
@@ -253,9 +254,16 @@ public class LoginActivity extends BaseActivity {
                 userAboutEditTextString,
                 Location
             )) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if(success) {
                 loginToChat(this.qbUser);
             }
-            return null;
         }
     }
 
