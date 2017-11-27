@@ -244,7 +244,7 @@ public class LoginActivity extends BaseActivity {
              * @Todo Make this method Atomic, delete QBUser if Instadate api failed
              * @Author Phil Kohberger
              */
-            if(requestExecutor.postQbUserToInstadateAPI(
+            if(requestExecutor.postQbUserToInstadateAPISynchronous(
                 PortraitImage,
                 qbUser.getId().toString(),
                 UsersUtils.HashId(qbUser.getId().toString()),

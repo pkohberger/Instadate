@@ -3,6 +3,7 @@ package com.quickblox.instadate.groupchatwebrtc.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -122,9 +123,30 @@ public class OpponentsActivity extends BaseActivity {
         webRtcSessionManager = WebRtcSessionManager.getInstance(getApplicationContext());
     }
 
-    private QBUser getUserWithInstadateApiData(QBUser user) {
-        user.setCustomData("{data:'custom1'}");
-        return user;
+    private class InstadateAsyncTask extends AsyncTask<String, Integer, Double> {
+
+        private ArrayList<QBUser>  qbUserList;
+
+        public InstadateAsyncTask (ArrayList<QBUser> result){
+            qbUserList = result;
+        }
+
+        @Override
+        protected Double doInBackground(String... params) {
+            try {
+                ArrayList<QBUser> newUserListWithApiData = new ArrayList<QBUser>();
+                for (int counter = 0; counter < qbUserList.size(); counter++) {
+                    newUserListWithApiData.add(
+                        requestExecutor.getQbUserByIdFromInstadateAPISynchronous(qbUserList.get(counter))
+                    );
+                }
+                dbManager.saveAllUsers(newUserListWithApiData, true);
+                initUsersList();
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     private void startLoadUsers() {
@@ -133,16 +155,7 @@ public class OpponentsActivity extends BaseActivity {
             @Override
             public void onSuccess(ArrayList<QBUser> result, Bundle params) {
                 hideProgressDialog();
-                ArrayList<QBUser> newUserListWithApiData = new ArrayList<QBUser>();
-                for (int counter = 0; counter < result.size(); counter++) {
-                    newUserListWithApiData.add(getUserWithInstadateApiData(result.get(counter)));
-                }
-                try {
-                    dbManager.saveAllUsers(newUserListWithApiData, true);
-                    initUsersList();
-                } catch(Exception e) {
-                    String message = e.getMessage();
-                }
+                new InstadateAsyncTask(result).execute();
             }
 
             @Override
@@ -151,7 +164,7 @@ public class OpponentsActivity extends BaseActivity {
                 showErrorSnackbar(R.string.loading_users_error, responseException, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startLoadUsers();
+                    startLoadUsers();
                     }
                 });
             }

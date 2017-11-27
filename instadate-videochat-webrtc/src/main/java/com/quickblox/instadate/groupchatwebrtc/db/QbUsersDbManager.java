@@ -46,6 +46,7 @@ public class QbUsersDbManager {
             int userPassColIndex = c.getColumnIndex(DbHelper.DB_COLUMN_USER_PASSWORD);
             int userFullNameColIndex = c.getColumnIndex(DbHelper.DB_COLUMN_USER_FULL_NAME);
             int userTagColIndex = c.getColumnIndex(DbHelper.DB_COLUMN_USER_TAG);
+            int userCustomDataColIndex = c.getColumnIndex(DbHelper.DB_COLUMN_USER_CUSTOM_DATA);
 
             do {
                 QBUser qbUser = new QBUser();
@@ -54,6 +55,9 @@ public class QbUsersDbManager {
                 qbUser.setLogin(c.getString(userLoginColIndex));
                 qbUser.setId(c.getInt(userIdColIndex));
                 qbUser.setPassword(c.getString(userPassColIndex));
+
+                String str = c.getString(userCustomDataColIndex);
+                //qbUser.setCustomData(c.getString(userCustomDataColIndex));
 
                 StringifyArrayList<String> tags = new StringifyArrayList<>();
                 tags.add(c.getString(userTagColIndex));
@@ -124,6 +128,7 @@ public class QbUsersDbManager {
         cv.put(DbHelper.DB_COLUMN_USER_ID, qbUser.getId());
         cv.put(DbHelper.DB_COLUMN_USER_PASSWORD, qbUser.getPassword());
         cv.put(DbHelper.DB_COLUMN_USER_TAG, qbUser.getTags().getItemsAsString());
+        cv.put(DbHelper.DB_COLUMN_USER_CUSTOM_DATA, qbUser.getCustomData().toString());
 
         db.insert(DbHelper.DB_TABLE_NAME, null, cv);
         dbHelper.close();
