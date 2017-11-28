@@ -3,14 +3,13 @@ package com.quickblox.instadate.groupchatwebrtc.adapters;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.quickblox.instadate.core.ui.adapter.BaseSelectableListAdapter;
-import com.quickblox.instadate.core.utils.ResourceUtils;
-import com.quickblox.instadate.core.utils.UiUtils;
 import com.quickblox.instadate.groupchatwebrtc.R;
 import com.quickblox.users.model.QBUser;
+import com.quickblox.instadate.groupchatwebrtc.utils.UsersUtils;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class OpponentsAdapter extends BaseSelectableListAdapter<QBUser> {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.item_opponents_list, null);
             holder = new ViewHolder();
-            holder.opponentIcon = (ImageView) convertView.findViewById(R.id.image_opponent_icon);
+            holder.opponentIconWebView = (WebView) convertView.findViewById(R.id.image_opponent_icon_web_view);
             holder.opponentName = (TextView) convertView.findViewById(R.id.opponentsName);
 
             convertView.setTag(holder);
@@ -43,25 +42,27 @@ public class OpponentsAdapter extends BaseSelectableListAdapter<QBUser> {
         final QBUser user = getItem(position);
 
         if (user != null) {
+
+            String html = UsersUtils.getWebViewPortraitHTML(user);
+
+            holder.opponentIconWebView.loadData(html, "text/html", null);
+
+            /**
+             * disable WebView scrolling
+             */
+            holder.opponentIconWebView.setScrollbarFadingEnabled(true);
+            holder.opponentIconWebView.setVerticalScrollBarEnabled(false);
+            holder.opponentIconWebView.setHorizontalScrollBarEnabled(false);
+
             holder.opponentName.setText(user.getFullName());
 
-            if (selectedItems.contains(user)){
-                convertView.setBackgroundResource(R.color.background_color_selected_user_item);
-                holder.opponentIcon.setBackgroundDrawable(
-                        UiUtils.getColoredCircleDrawable(ResourceUtils.getColor(R.color.icon_background_color_selected_user)));
-                holder.opponentIcon.setImageResource(R.drawable.ic_checkmark);
-            } else {
-                convertView.setBackgroundResource(R.color.background_color_normal_user_item);
-                holder.opponentIcon.setBackgroundDrawable(UiUtils.getColorCircleDrawable(user.getId()));
-                holder.opponentIcon.setImageResource(R.drawable.ic_person);
-            }
         }
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleSelection(position);
-                selectedItemsCountChangedListener.onCountSelectedItemsChanged(selectedItems.size());
+            toggleSelection(position);
+            selectedItemsCountChangedListener.onCountSelectedItemsChanged(selectedItems.size());
             }
         });
 
@@ -69,8 +70,8 @@ public class OpponentsAdapter extends BaseSelectableListAdapter<QBUser> {
     }
 
     public static class ViewHolder {
-        ImageView opponentIcon;
         TextView opponentName;
+        WebView opponentIconWebView;
     }
 
     public void setSelectedItemsCountsChangedListener(SelectedItemsCountsChangedListener selectedItemsCountsChanged){

@@ -172,6 +172,7 @@ public class LoginActivity extends BaseActivity {
     private boolean isEnteredUserBirthdayValid() {
         /**
          * not using validation class because using toast for message
+         * @Author Phil Kohberger
          */
         if(birthDate == null) {
             return false;

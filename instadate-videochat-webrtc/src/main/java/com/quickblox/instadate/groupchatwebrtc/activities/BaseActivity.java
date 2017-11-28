@@ -52,8 +52,8 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.CAMERA
-
+        Manifest.permission.CAMERA,
+        Manifest.permission.INTERNET
     };
 
     @Override
@@ -77,12 +77,14 @@ public abstract class BaseActivity extends CoreBaseActivity implements LocationL
             int writePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int readPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
             int cameraPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            int internetPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
 
             if (writePermission != PackageManager.PERMISSION_GRANTED
                     ||  readPermission != PackageManager.PERMISSION_GRANTED
                     ||  cameraPermission != PackageManager.PERMISSION_GRANTED
                     ||  locationFinePermission != PackageManager.PERMISSION_GRANTED
-                    ||  locationCoarsePermission != PackageManager.PERMISSION_GRANTED) {
+                    ||  locationCoarsePermission != PackageManager.PERMISSION_GRANTED
+                    ||  internetPermission != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(
                         this,
