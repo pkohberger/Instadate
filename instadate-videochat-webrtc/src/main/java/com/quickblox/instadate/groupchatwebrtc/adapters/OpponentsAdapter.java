@@ -61,8 +61,8 @@ public class OpponentsAdapter extends BaseSelectableListAdapter<QBUser> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            toggleSelection(position);
-            selectedItemsCountChangedListener.onCountSelectedItemsChanged(selectedItems.size());
+                toggleSelection(position);
+                selectedItemsCountChangedListener.onCountSelectedItemsChanged(selectedItems.size());
             }
         });
 

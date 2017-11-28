@@ -1,8 +1,6 @@
 package com.quickblox.instadate.groupchatwebrtc.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import com.quickblox.instadate.core.utils.SharedPrefsHelper;
@@ -13,16 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.quickblox.instadate.groupchatwebrtc.utils.Consts;
 
 import java.security.MessageDigest;
 
