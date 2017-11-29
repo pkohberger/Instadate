@@ -94,9 +94,9 @@ public class UsersUtils {
         }
     }
 
-    public static String getWebViewPortraitHTML(QBUser user)  {
+    public static String getWebViewThumbnailHTML(QBUser user)  {
 
-        String url = extractInstadatePortraitUrl(user);
+        String url = extractInstadateThumbnailUrl(user);
 
         if(url.isEmpty()) {
             return null;
@@ -113,7 +113,7 @@ public class UsersUtils {
         return html;
     }
 
-    public static String extractInstadatePortraitUrl(QBUser user)  {
+    public static String extractInstadateThumbnailUrl(QBUser user)  {
         /**
          * @Todo Add Default random colored image if none
          * @Author Phil Kohberger
@@ -130,7 +130,7 @@ public class UsersUtils {
 
                     JSONObject filePath = filePaths.getJSONObject(i);
                     String image = filePath.getString("fileName")+filePath.getString("fileType");
-                    return Consts.INSTADATE_API_HOST + "/Uploads/" + image;
+                    return Consts.INSTADATE_API_HOST + "/Images/Thumbnails/" + image;
 
                 }
             }

@@ -43,7 +43,7 @@ public class OpponentsAdapter extends BaseSelectableListAdapter<QBUser> {
 
         if (user != null) {
 
-            String html = UsersUtils.getWebViewPortraitHTML(user);
+            String html = UsersUtils.getWebViewThumbnailHTML(user);
 
             holder.opponentIconWebView.loadData(html, "text/html", null);
 
