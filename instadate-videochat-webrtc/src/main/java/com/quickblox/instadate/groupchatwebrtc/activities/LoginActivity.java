@@ -3,14 +3,18 @@ package com.quickblox.instadate.groupchatwebrtc.activities;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -26,6 +30,7 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.graphics.Bitmap;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -44,8 +49,11 @@ import com.quickblox.instadate.groupchatwebrtc.utils.UsersUtils;
 import com.quickblox.instadate.groupchatwebrtc.utils.ValidationUtils;
 import com.quickblox.users.model.QBUser;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 public class LoginActivity extends BaseActivity {
 
@@ -347,9 +355,7 @@ public class LoginActivity extends BaseActivity {
 
         if(requestCode == Consts.CAMERA_PIC_REQUEST && resultCode == RESULT_OK) {
             Bitmap image = (Bitmap) data.getExtras().get("data");
-            PortraitImage = image;
-            imageView = (CircleImageView) findViewById(R.id.SelectedImage);
-            imageView.setImageBitmap(image);
+            startCropActivity(getImageUri(this,image));
         }
 
         if(requestCode == Consts.PICK_PHOTO_FOR_PORTRAIT && resultCode == RESULT_OK) {
@@ -358,23 +364,86 @@ public class LoginActivity extends BaseActivity {
                 Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                 String imageAbs = getRealPathFromURI(this,uri);
                 image = modifyOrientation(image,imageAbs);
-                PortraitImage = (Bitmap) image;
-                imageView = (CircleImageView) findViewById(R.id.SelectedImage);
-                imageView.setImageBitmap(image);
+                startCropActivity(getImageUri(this,image));
             } catch (IOException ex) {
                Log.d("",ex.getMessage());
             }
+        }
+
+        if(requestCode == Consts.CAMERA_CROP_REQUEST && resultCode == RESULT_OK) {
+            try {
+                final Uri uri = data.getData();
+                Bitmap image;
+                String imageAbs;
+                if(data.getData()==null){
+                    image = (Bitmap)data.getExtras().get("data");
+                    imageAbs = getRealPathFromURI(this,getImageUri(this,image));
+                }else{
+                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                    imageAbs = getRealPathFromURI(this,uri);
+                }
+                image = modifyOrientation(image,imageAbs);
+                PortraitImage = image;
+                imageView = (CircleImageView) findViewById(R.id.SelectedImage);
+                imageView.setImageBitmap(image);
+            } catch (Exception ex) {
+                Log.d("",ex.getMessage());
+            }
+        }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public void startCropActivity(Uri imageCaptureUri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setType("image/*");
+
+        List<ResolveInfo> list = getPackageManager().queryIntentActivities(
+                intent, 0);
+
+        int size = list.size();
+
+        if (size == 0) {
+            Toast.makeText(this, "Can not find image crop app",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            intent.setData(imageCaptureUri)
+                .putExtra("crop", "true")
+                .putExtra("aspectX", 400)
+                .putExtra("aspectY", 400)
+                .putExtra("outputX", 400)
+                .putExtra("outputY", 400)
+                .putExtra("scale", true)
+                .putExtra("scaleUpIfNeeded", true)
+                .putExtra("return-data", true)
+                .putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+
+            Intent i = new Intent(intent);
+            ResolveInfo res = list.get(0);
+
+            i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+
+            startActivityForResult(i, Consts.CAMERA_CROP_REQUEST);
         }
     }
 
     public String getRealPathFromURI(Context context, Uri contentUri) {
         Cursor cursor = null;
         try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             return cursor.getString(column_index);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
         } finally {
             if (cursor != null) {
                 cursor.close();

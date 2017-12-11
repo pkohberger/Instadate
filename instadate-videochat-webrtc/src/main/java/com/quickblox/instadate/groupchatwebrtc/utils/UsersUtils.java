@@ -106,7 +106,7 @@ public class UsersUtils {
         html += "<html style='overflow:hidden;'>";
         html +=     "<head><meta name='viewport' content='width=device-width, initial-scale=1' /></head>";
         html +=     "<body>";
-        html +=         "<img style='height:auto;width:100%;' src='" + url + "' />";
+        html +=         "<img style='border-radius:50%;height:auto;width:100%;' src='" + url + "' />";
         html +=     "</body>";
         html += "</html>";
 

@@ -51,6 +51,7 @@ public interface Consts {
     int EXTRA_LOGIN_RESULT_CODE = 1002;
     int CAMERA_PIC_REQUEST = 1003;
     int PICK_PHOTO_FOR_PORTRAIT = 1004;
+    int CAMERA_CROP_REQUEST = 1005;
 
     String[] PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 
